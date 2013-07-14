@@ -11,19 +11,20 @@ char* mode = "time_choose"; // Modes are time_choose, sleep_coach, and off
 
 int time_choice = 7;
 
-const int LEDPin = 9;
+const int LEDPin = 0;
 
 
-const int ButtonPin = 2;
+const int ButtonPin = 1;
 int button_state = 0;
 int button_pushed = 0; // This is the indicator that the button was pushed and released
 int button_counter = 0; // This is used to detect how long the button is held for
 
-#define potPin 0 // Pin for potentiometer
+int potPin = 3; // Pin for potentiometer
 int pot_val; // Value of potentiometer reading
 
-int blink_pattern[4] = {1,0,0,0}; // This is the indicator for the current time setting. It will blink 1 of 4 LEDs
 int blink = 1; // This is used for blinking the LEDs
+int blink_time = 500;
+int blink_value = 254;
 
 
 unsigned long currentTime;
@@ -36,8 +37,8 @@ int delay_int = 1;
 int brightness = 0;
 int max_brightness = 244;
 double brightincrease = 1;
-double k = 0.00108;
-double k_initial = 0.00108;
+double k = 0.00108*5;
+double k_initial = 0.00108*5;
 double k_final = 0.00065;
 double x = 3*3.14159/2/k; // This starts it at 0 brightness
 
@@ -50,10 +51,7 @@ int button_press_completed[1];    // storage for button press function
 
 void setup() {                
   // initialize the digital pin as an output.
-  pinMode(LED1Pin, OUTPUT);
-  pinMode(LED2Pin, OUTPUT);
-  pinMode(LED3Pin, OUTPUT);
-  pinMode(LED4Pin, OUTPUT);
+  pinMode(LEDPin, OUTPUT);
   pinMode(ButtonPin, INPUT);
 //  Serial.begin(9600);  
 }
@@ -79,36 +77,24 @@ button_pushed = 0;
 if (time_choice > 28){time_choice = 7;}
   
   if (time_choice == 7){
-    blink_pattern[0] = max_brightness;
-    blink_pattern[1] = 0;
-    blink_pattern[2] = 0;
-    blink_pattern[3] = 0;
-    k_final = 0.00065; // Equates to 10 second breath cycle
+    k_final = 0.00065*5; // Equates to 10 second breath cycle
     total_time = 420;
+    blink_time = 250;
   }
   if (time_choice == 14){
-    blink_pattern[0] = 0;
-    blink_pattern[1] = max_brightness;
-    blink_pattern[2] = 0;
-    blink_pattern[3] = 0;
-    k_final = 0.00056; // Equates to 12 second breath cycle
+    k_final = 0.00056*5; // Equates to 12 second breath cycle
     total_time = 840;
+    blink_time = 500;
   }
   if (time_choice == 21){
-    blink_pattern[0] = 0;
-    blink_pattern[1] = 0;
-    blink_pattern[2] = max_brightness;
-    blink_pattern[3] = 0;
-    k_final = 0.00046; // Equates to 14 second breath cycle
+    k_final = 0.00046*5; // Equates to 14 second breath cycle
     total_time = 1260;
+    blink_time = 750;
   }
   if (time_choice == 28){
-    blink_pattern[0] = 0;
-    blink_pattern[1] = 0;
-    blink_pattern[2] = 0;
-    blink_pattern[3] = max_brightness;
-    k_final = 0.000406; // Equates to 16 second breath cycle
+    k_final = 0.000406*5; // Equates to 16 second breath cycle
     total_time = 1680;
+    blink_time = 1000;
   }
  
 if (tick(1000,second_timer) == 1){
@@ -117,7 +103,7 @@ if (button_state == 1){button_counter += 1;}
 
 if (button_state == 0){button_counter = 0;}
 
-if (tick(500,blink_timer) == 1){
+if (tick(blink_time,blink_timer) == 1){
  if (blink == 1){blink = 0;}
  else if (blink == 0){blink = 1;}
 }
@@ -126,17 +112,14 @@ if (button_state == 1){
 blink = 1;
 }
 
+blink_value = max_brightness;
+
 if (blink == 0){  
-  blink_pattern[0] = 0;
-  blink_pattern[1] = 0;
-  blink_pattern[2] = 0;
-  blink_pattern[3] = 0;
+blink_value = 0;
 }
 
-analogWrite(LED1Pin,  blink_pattern[0]);
-analogWrite(LED2Pin,  blink_pattern[1]);
-analogWrite(LED3Pin,  blink_pattern[2]);
-analogWrite(LED4Pin,  blink_pattern[3]);
+analogWrite(LEDPin, blink_value);
+
 
 if (button_counter >= 3){ // If the user holds the button for 3 seconds, start the sleep coach
 button_pushed = 0;
