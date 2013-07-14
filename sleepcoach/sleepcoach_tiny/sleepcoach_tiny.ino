@@ -11,17 +11,15 @@ char* mode = "time_choose"; // Modes are time_choose, sleep_coach, and off
 
 int time_choice = 7;
 
-const int LED1Pin = 5;
-const int LED2Pin = 9;
-const int LED3Pin = 6;
-const int LED4Pin = 10;
+const int LEDPin = 9;
 
-const int ButtonPin = 11;
+
+const int ButtonPin = 2;
 int button_state = 0;
 int button_pushed = 0; // This is the indicator that the button was pushed and released
 int button_counter = 0; // This is used to detect how long the button is held for
 
-#define potPin 5 // Pin for potentiometer
+#define potPin 0 // Pin for potentiometer
 int pot_val; // Value of potentiometer reading
 
 int blink_pattern[4] = {1,0,0,0}; // This is the indicator for the current time setting. It will blink 1 of 4 LEDs
@@ -168,10 +166,7 @@ if (tick(1000,second_timer) == 1){
 }
 if (x*k >= 2*3.14159){x=0;}
 //else if (brightness <= 0){brightincrease = 1;}
-  analogWrite(LED1Pin,brightness);
-  analogWrite(LED2Pin,brightness);
-  analogWrite(LED3Pin,brightness);
-  analogWrite(LED4Pin,brightness);
+  analogWrite(LEDPin,brightness);
 
 if (button_state == 0){button_counter = 0;}
 
@@ -187,12 +182,8 @@ x = 3*3.14159/2/k; // Start it back at 0 brightness
 
 if (mode == "off"){
   
-analogWrite(LED1Pin,  0);
-analogWrite(LED2Pin,  0);
-analogWrite(LED3Pin,  0);
-analogWrite(LED4Pin,  0);
-  
-
+analogWrite(LEDPin,  0);
+ 
 delay(1);
 
 if (button_pushed == 1){ // Turn the device on by pushing the button
