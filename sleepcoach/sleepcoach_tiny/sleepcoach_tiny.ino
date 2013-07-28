@@ -1,7 +1,17 @@
 #include <math.h>
-
+#include <avr/sleep.h>
 
 // Sleep coach using ATTiny 85
+
+
+// Setting up bits for sleep mode (from: http://www.insidegadgets.com/2011/02/05/reduce-attiny-power-consumption-by-sleeping-with-the-watchdog-timer/)
+
+#ifndef cbi
+#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+#endif
+#ifndef sbi
+#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+#endif
 
 
 char* mode = "time_choose"; // Modes are time_choose, sleep_coach, and off
@@ -53,6 +63,9 @@ void setup() {
   // initialize the digital pin as an output.
   pinMode(LEDPin, OUTPUT);
   pinMode(ButtonPin, INPUT);
+  
+  sbi(GIMSK,PCIE); // Turn on Pin Change interrupt
+  sbi(PCMSK,PCINT1); // Which pins are affected by the interrupt
 //  Serial.begin(9600);  
 }
 
@@ -164,12 +177,14 @@ x = 3*3.14159/2/k; // Start it back at 0 brightness
 }
 
 if (mode == "off"){
+
+analogWrite(LEDPin,  0);  
   
-analogWrite(LEDPin,  0);
- 
+system_sleep();
+  
 delay(1);
 
-if (button_pushed == 1){ // Turn the device on by pushing the button
+if (button_state == 1){ // Turn the device on by pushing the button
 mode = "time_choose";
 button_pushed = 0;
 button_counter = 0;
@@ -206,4 +221,14 @@ else {return 0;}
 void tick_reset(double timekeeper[1]){
 currentTime = millis();
 timekeeper[0] = currentTime;
+}
+
+void system_sleep() {
+  cbi(ADCSRA,ADEN); // Switch Analog to Digital converter OFF
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN); // Set sleep mode
+  sleep_mode(); // System sleeps here
+  sbi(ADCSRA,ADEN);  // Switch Analog to Digital converter ON
+}
+
+ISR(PCINT0_vect) {
 }
