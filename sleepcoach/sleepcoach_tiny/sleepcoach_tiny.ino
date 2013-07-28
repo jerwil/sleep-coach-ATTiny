@@ -1,8 +1,9 @@
 #include <math.h>
 #include <avr/sleep.h>
 
-// Sleep coach using ATTiny 85
+// Sleep coach using ATtiny85
 
+//Programming ATtiny85 learned from: http://www.instructables.com/id/Program-an-ATtiny-with-Arduino/step2/Wire-the-circuit/
 
 // Setting up bits for sleep mode (from: http://www.insidegadgets.com/2011/02/05/reduce-attiny-power-consumption-by-sleeping-with-the-watchdog-timer/)
 
@@ -35,6 +36,9 @@ int pot_val; // Value of potentiometer reading
 int blink = 1; // This is used for blinking the LEDs
 int blink_time = 500;
 int blink_value = 254;
+
+int timeout = 0; // This is the timeout counter
+int timeout_setting = 60; // This is the setting for timeout in time_choose mode. If this is exceeded, the device will go to off mode
 
 
 unsigned long currentTime;
@@ -111,7 +115,8 @@ if (time_choice > 28){time_choice = 7;}
   }
  
 if (tick(1000,second_timer) == 1){
-if (button_state == 1){button_counter += 1;} 
+timeout += 1;
+if (button_state == 1){button_counter += 1;}
 }
 
 if (button_state == 0){button_counter = 0;}
@@ -123,6 +128,7 @@ if (tick(blink_time,blink_timer) == 1){
 
 if (button_state == 1){
 blink = 1;
+timeout = 0;
 }
 
 blink_value = max_brightness;
@@ -139,10 +145,14 @@ button_pushed = 0;
 mode = "sleep_coach";
 button_counter = 0;
 }
+
+if (timeout >= timeout_setting){mode = "off";}
  
 }
   
 if (mode == "sleep_coach"){
+  
+timeout = 0;
   
 if (current_time >= total_time){
 current_time = 0;
@@ -188,6 +198,7 @@ if (button_state == 1){ // Turn the device on by pushing the button
 mode = "time_choose";
 button_pushed = 0;
 button_counter = 0;
+timeout = 0;
 }
 
 current_time = 0;
