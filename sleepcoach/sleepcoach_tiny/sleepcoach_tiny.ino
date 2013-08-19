@@ -94,22 +94,22 @@ button_pushed = 0;
 if (time_choice > 28){time_choice = 7;}
   
   if (time_choice == 7){
-    k_final = 0.00065*5; // Equates to 10 second breath cycle
+    k_final = .003; // Equates to 10 second breath cycle
     total_time = 420;
     blink_time = 250;
   }
   if (time_choice == 14){
-    k_final = 0.00056*5; // Equates to 12 second breath cycle
+    k_final = .0025; // Equates to 12 second breath cycle
     total_time = 840;
     blink_time = 500;
   }
   if (time_choice == 21){
-    k_final = 0.00046*5; // Equates to 14 second breath cycle
+    k_final = .0022; // Equates to 14 second breath cycle
     total_time = 1260;
     blink_time = 750;
   }
   if (time_choice == 28){
-    k_final = 0.000406*5; // Equates to 16 second breath cycle
+    k_final = .0019; // Equates to 16 second breath cycle
     total_time = 1680;
     blink_time = 1000;
   }
