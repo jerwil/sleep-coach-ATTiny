@@ -91,7 +91,10 @@ if (button_pushed == 1){
 time_choice += 7;
 button_pushed = 0;
 }
-if (time_choice > 28){time_choice = 7;}
+if (time_choice > 28){
+time_choice = 0;
+mode = "off";
+}
   
   if (time_choice == 7){
     k_final = .003; // Equates to 10 second breath cycle
@@ -154,8 +157,9 @@ if (mode == "sleep_coach"){
   
 timeout = 0;
   
-if (current_time >= total_time){
+if (current_time >= total_time && brightness <= 10){
 current_time = 0;
+time_choice = 0;
 mode = "off";
 x = 0;
 }
@@ -181,6 +185,7 @@ mode = "off";
 button_pushed = 0;
 button_counter = 0;
 current_time = 0;
+time_choice = 0;
 x = 3*3.14159/2/k; // Start it back at 0 brightness
 }
 
